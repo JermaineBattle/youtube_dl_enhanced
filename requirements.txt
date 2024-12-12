@@ -3,3 +3,7 @@ yt-dlp
 tqdm
 ffmpeg-normalize
 ffmpeg
+python
+python3
+python3.13
+tqdm
