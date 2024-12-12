@@ -4,7 +4,7 @@ FROM python:3.9-slim
 # Set working directory in the container
 WORKDIR /app
 
-# Install system dependencies, including ffmpeg
+# Install system dependencies
 RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 
 # Copy application files to the container
