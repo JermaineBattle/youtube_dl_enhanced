@@ -10,7 +10,6 @@ function prepare_virtualenv_mac {
     command -v brew >/dev/null 2>&1 || { echo >&2 "Installing Homebrew..."; \
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"; }
 
-    # brew install --cask docker
     brew install ffmpeg --with-fdk-aac --with-tools --with-freetype --with-libass --with-libvorbis --with-libvpx --with-x265
     brew install youtube-dl
     brew upgrade ffmpeg
@@ -21,10 +20,12 @@ function prepare_virtualenv_mac {
     echo Installing certificates...
     ./Install\ Certificates.command
 
+    echo Installing FFMPEG...
     wget -O .env/ffmpeg https://evermeet.cx/ffmpeg/ffmpeg-118022-gca889b1328.7z
-    7z x .env/ffmpeg -o.env
+    7z x .env/ffmpeg.7z -o.env
+    echo Installing FFMPEG...
     wget -O .env/ffprobe https://evermeet.cx/ffmpeg/ffprobe-118022-gca889b1328.7z
-    7z x .env/ffprobe -o.env
+    7z x .env/ffprobe.7z -o.env
 }
 
 function prepare_virtualenv_linux {
