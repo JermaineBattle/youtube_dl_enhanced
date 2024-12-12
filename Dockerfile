@@ -13,7 +13,7 @@ RUN python -m venv .env && \
     pip install --no-cache-dir -r requirements.txt
 
 # Make the script executable
-RUN chmod +x youtube_dl_extreme.py
+RUN chmod +x youtube_dl_enhanced.py
 
 # Default command to run your application
-ENTRYPOINT ["./youtube_dl_extreme.py"]
+ENTRYPOINT ["./youtube_dl_enhanced.py"]

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd "$(dirname "$0")"
-./runextreme.command "$@"
+./runenhanced.command "$@"

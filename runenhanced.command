@@ -21,4 +21,4 @@
 # docker build -t youtube_dl_extreme .  # Build the Docker image
 
 # Run the container with arguments
-docker run -it --rm youtube_dl_extreme "$@"
+docker run -it --rm youtube_dl_enhanced "$@"

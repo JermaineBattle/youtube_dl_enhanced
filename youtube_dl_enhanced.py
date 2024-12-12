@@ -181,30 +181,6 @@ FFMPEG_PRORES_LETTERBOX_CAPS = ['ffmpeg', '-i',
                                 '-ar 48000',
                                 '{outpath}']
 
-
-
-# -----------------------------------------
-# DEPRECATED LIST
-# SEE BELOW LIST FOR UPDATE
-# -----------------------------------------
-# FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
-#                  'ffmpeg', '-i',
-#                  '{inpath}', 
-#                  '-c:v copy',
-#                  '-ac 1',
-#                  'Temp_Mono.mov',
-#                  '&&',
-#                  'ffmpeg', '-i',
-#                  'Temp_Mono.mov', 
-#                  '-c:v copy',
-#                  '-ac 2',
-#                  '{outpath}',
-#                  '&& rm Temp_Mono.mov'] 
-# -----------------------------------------
-# SEE LIST BELOW FOR UPDATE
-# -----------------------------------------
-
-
 # LIST UPDATED TO ACCOMODATE MONO --> STEREO FUNCTIONALITY
 FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
                  'ffmpeg', '-i',
@@ -214,8 +190,6 @@ FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
                  '-ac 2',
                  '{outpath}',
                  '&& rm Temp_Mono.mov']
-
-
 
 FFMPEG_NORM =   [' && ffmpeg-normalize',
                 '{outpath}',
@@ -609,8 +583,6 @@ def youtube_process(url):
     url = strip_features(url)
     captions = auto_captions = False
     if not args.skip_encoding:
-        #captions = get_captions()
-        #auto_captions = get_auto_captions() if captions else False
         global starttime
         global runtime
         global norm
@@ -644,7 +616,7 @@ def main():
         video_file = files.get('video')
         if not video_file:
             log.debug('Something went wrong, video not found.')
-            break # re-visit this
+            break 
 
         if args.skip_encoding:
             mp4_container(video_file)
