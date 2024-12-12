@@ -12,6 +12,8 @@ COPY . .
 
 # Install dependencies
 RUN pip install --upgrade pip && \
+    python -m venv .env && \
+    . .env/bin/activate && \
     pip install --no-cache-dir youtube-dl yt-dlp && \
     pip install --no-cache-dir -r requirements.txt
 
