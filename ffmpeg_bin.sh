@@ -1,7 +1,5 @@
 #!/bin/bash
 
-brew install ffmpeg
-
 # Download/Unpack ffmpeg/ffprobe
 wget -O .env/bin/ffmpeg.7z https://evermeet.cx/ffmpeg/ffmpeg-118022-gca889b1328.7z
 7z x .env/bin/ffmpeg.7z -o.env/bin/
