@@ -100,10 +100,28 @@ else:
     log.warning('Unsupported resolution for -res argument.  Supported resolutions are: 720, 1080, 2160')
     os._exit(os.EX_OK)
 
-# Set paths
-DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
+# Detect if running inside Docker (optional, but useful for flexibility)
+RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
+
+# Set paths based on environment
+if RUNNING_IN_DOCKER:
+    # Use the container's mapped Desktop directory
+    DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
+else:
+    # Use the host's Desktop directory
+    DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
+
 DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
 ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
+
+# Ensure directories exist
+os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
+os.makedirs(DOWNLOADING, exist_ok=True)
+os.makedirs(ENCODING, exist_ok=True)
+
+print(f"Download location: {DOWNLOAD_LOCATION}")
+print(f"Downloading directory: {DOWNLOADING}")
+print(f"Encoding directory: {ENCODING}")
 
 YOUTUBE_CAPTION_FORMATS = set(['.srt', '.sbv', '.sub', '.mpsub', '.lrc', '.cap', '.smi',
                                 '.sami', '.rt', '.vtt', '.ttml', '.dfxp', '.scc', '.stl',
