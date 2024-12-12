@@ -25,18 +25,18 @@ echo "Accepting Docker EULA..."
 mkdir -p "$DOCKER_SETTINGS_DIR"
 echo '{"EulaAccepted": true}' > "$DOCKER_SETTINGS_FILE"
 
-# Launch Docker Desktop
-echo "Launching Docker Desktop..."
-open "$DOCKER_APP_PATH"
+# # Launch Docker Desktop
+# echo "Launching Docker Desktop..."
+# open "$DOCKER_APP_PATH"
 
-# Wait for Docker to Start
-echo "Waiting for Docker to start..."
-while ! docker system info > /dev/null 2>&1; do
-    sleep 5
-    echo "Docker is still starting..."
-done
+# # Wait for Docker to Start
+# echo "Waiting for Docker to start..."
+# while ! docker system info > /dev/null 2>&1; do
+#     sleep 5
+#     echo "Docker is still starting..."
+# done
 
-echo "Docker Desktop is now running."
+# echo "Docker Desktop is now running."
 
 # Cleanup
 echo "Cleaning up installation files..."
