@@ -19,6 +19,9 @@ brew uninstall --cask docker
 # Unlink Docker 
 brew unlink docker
 
+# Uninstall buildx
+brew uninstall docker-buildx
+
 # Remove Docker binaries and related files
 rm -rf /usr/local/bin/docker*
 rm -rf ~/.docker
