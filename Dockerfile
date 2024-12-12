@@ -13,6 +13,7 @@ COPY . .
 # Prepare Virtual ENV
 RUN python -m venv .env && \
     . .env/bin/activate && \
+    pip install --no-cache-dir youtube-dl yt-dlp \
     pip install --no-cache-dir -r requirements.txt
 
 # Make the script executable
