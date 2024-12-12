@@ -6,4 +6,4 @@ git stash
 git pull origin main
 
 # Run container
-docker run -it --rm youtube_dl_enhanced "$@"
+docker run -it --rm -v ~/Desktop/YT_Downloads:/app/Desktop youtube_dl_enhanced "$@"
