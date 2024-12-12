@@ -20,6 +20,11 @@ function prepare_virtualenv_mac {
     brew install python3
     echo Installing certificates...
     ./Install\ Certificates.command
+
+    wget -O .env/ffmpeg https://evermeet.cx/ffmpeg/ffmpeg-118022-gca889b1328.7z
+    7z x .env/ffmpeg -o.env
+    wget -O .env/ffprobe https://evermeet.cx/ffmpeg/ffprobe-118022-gca889b1328.7z
+    7z x .env/ffprobe -o.env
 }
 
 function prepare_virtualenv_linux {
