@@ -439,7 +439,7 @@ def get_audio():
 
 def get_mp4():
     '''Output Audio only'''
-    user_input = input('Would you like to convert to MP4 format? (yes/no)') or 'n'
+    user_input = input('Would you like to convert to MP4 format? --PLAY VIA BROWSER ONLY-- (yes/no)') or 'n'
     if not user_input[0].lower() == 'y':
         return False
     args.skip_encoding = True
