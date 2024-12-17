@@ -539,7 +539,7 @@ def mp4_container(video_path):
     try:
         outpoint = time.strftime('%H:%M:%S', time.gmtime(duration + 1))
     except:
-        outpoint = '02:00:00'
+        outpoint = '08:30:00'
 
     vid_name, ext = os.path.splitext(os.path.basename(video_path))
     if ext == '.mp4':
