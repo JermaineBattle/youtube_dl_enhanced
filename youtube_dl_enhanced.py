@@ -100,19 +100,42 @@ else:
     log.warning('Unsupported resolution for -res argument.  Supported resolutions are: 720, 1080, 2160')
     os._exit(os.EX_OK)
 
+
+
+
 # Detect if running inside Docker (optional, but useful for flexibility)
 RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
 
-# Set paths based on environment
+# # Set paths based on environment
+# if RUNNING_IN_DOCKER:
+#     # Use the container's mapped Desktop directory
+#     DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
+# else:
+#     # Use the host's Desktop directory
+#     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
+
+
 if RUNNING_IN_DOCKER:
-    # Use the container's mapped Desktop directory
-    DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
+    # Prepend /host to all file paths inside the container
+    def resolve_path(path):
+        return os.path.join('/host', path.lstrip('/'))
 else:
-    # Use the host's Desktop directory
+    # Use the path directly on the host system
+    def resolve_path(path):
+        return path
+    
+if RUNNING_IN_DOCKER:
+    # Prepend `/host` to map the Desktop directory inside the container
+    DOWNLOAD_LOCATION = '/host/Users/{}/Desktop/YT_Downloads/'.format(os.environ.get('USER', ''))
+else:
+    # Use the user's Desktop directory on the host
     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
 
 DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
 ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
+
+# DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
+# ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
 
 # Ensure directories exist
 os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
