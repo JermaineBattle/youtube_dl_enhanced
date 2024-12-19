@@ -258,7 +258,11 @@ def get_url():
     """Prompt user to enter YouTube link or local file path"""
     while True:
         url = input('Enter YouTube link or drag and drop local file: ')
-        url = re.sub(r'\\', '', url).strip()
+
+        print(f"Original input: {url}")
+        url = re.sub(r'\\', '', url).strip()  # Ensure this isn't altering the file path incorrectly
+        print(f"Processed input: {url}")
+        # url = re.sub(r'\\', '', url).strip()
 
         # Check if it's a valid local file
         if os.path.exists(url):
