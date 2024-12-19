@@ -597,18 +597,69 @@ def cleanup():
 #     files = get_files(local=True)
 #     return files
 
-def download_video(source, captions=False, auto_captions=False, legacy=False):
-    if os.path.isfile(source):
-        print(f"Processing local file: {source}")
-        # Handle local file processing logic here (e.g., copy/move/convert)
-        shutil.copy2(source, DOWNLOADING)
-        return
-    elif re.match(r'^https?://', source):
-        print(f"Downloading from URL: {source}")
-        # Existing YouTube download logic
-        yt_dlp.download(source, captions, auto_captions, legacy)
+def local_process(path):
+    # Debug: Print the input path
+    print(f"local_process called with path: {path}")
+    
+    # Ensure the path is absolute and exists
+    path = os.path.abspath(path)
+    print(f"Absolute path: {path}")
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"The file {path} does not exist.")
+    
+    # Extract and sanitize the filename
+    video = os.path.basename(path)
+    print(f"Original video name: {video}")
+    new_name = re.sub(' ', '_', video)
+    print(f"Sanitized video name: {new_name}")
+
+    # Ensure the DOWNLOADING directory exists
+    if not os.path.isdir(DOWNLOADING):
+        raise NotADirectoryError(f"The DOWNLOADING directory {DOWNLOADING} does not exist.")
+    
+    # Copy the file and handle errors
+    try:
+        target_path = os.path.join(DOWNLOADING, new_name)
+        print(f"Copying file to: {target_path}")
+        shutil.copy2(path, target_path)
+        print("File copy successful.")
+    except Exception as e:
+        print(f"Error during file copy: {e}")
+        raise RuntimeError(f"Failed to copy file: {e}")
+    
+    # Initialize global variables
+    global starttime, runtime, monofix, mp4, norm, audio
+
+    # Debug: Check and log mono status
+    monofix = get_mono()
+    print(f"Monofix status: {monofix}")
+    if not monofix:
+        starttime, runtime = get_trim()
+        print(f"Trim settings - Start time: {starttime}, Runtime: {runtime}")
     else:
-        raise ValueError(f"Invalid source: {source}. Must be a valid URL or file path.")
+        starttime = False
+        runtime = False
+        print("No trimming required.")
+
+    # Debug: Log settings from helper functions
+    mp4 = get_mp4()
+    print(f"MP4 conversion status: {mp4}")
+    norm = get_norm()
+    print(f"Normalization status: {norm}")
+    audio = get_audio()
+    print(f"Audio processing status: {audio}")
+    
+    # Get processed files
+    try:
+        files = get_files(local=True)
+        print(f"Processed files: {files}")
+    except Exception as e:
+        print(f"Error getting files: {e}")
+        raise RuntimeError(f"Failed to retrieve processed files: {e}")
+    
+    return files
+
+
 
 
 def youtube_process(url):
@@ -641,8 +692,7 @@ def main():
 
         url = get_url()
         if check_path(url):
-            # files = local_process(url)
-            files = download_video(url)
+            files = local_process(url)
         else:
             files = youtube_process(url)
 
