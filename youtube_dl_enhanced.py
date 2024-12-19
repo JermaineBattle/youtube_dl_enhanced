@@ -597,37 +597,18 @@ def cleanup():
 #     files = get_files(local=True)
 #     return files
 
-def local_process(path):
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"The file {path} does not exist.")
-    
-    video = os.path.basename(path)
-    new_name = re.sub(' ', '_', video)
-
-    if not os.path.isdir(DOWNLOADING):
-        raise NotADirectoryError(f"DOWNLOADING directory {DOWNLOADING} does not exist.")
-    
-    try:
-        # Copy the file to the downloading directory
-        shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
-    except Exception as e:
-        raise RuntimeError(f"Failed to copy file: {e}")
-    
-    global starttime, runtime, monofix, mp4, norm, audio
-    
-    monofix = get_mono()
-    if not monofix:
-        starttime, runtime = get_trim()
+def download_video(source, captions=False, auto_captions=False, legacy=False):
+    if os.path.isfile(source):
+        print(f"Processing local file: {source}")
+        # Handle local file processing logic here (e.g., copy/move/convert)
+        shutil.copy2(source, DOWNLOADING)
+        return
+    elif re.match(r'^https?://', source):
+        print(f"Downloading from URL: {source}")
+        # Existing YouTube download logic
+        yt_dlp.download(source, captions, auto_captions, legacy)
     else:
-        starttime, runtime = False, False
-    
-    mp4 = get_mp4()
-    norm = get_norm()
-    audio = get_audio()
-
-    # Get the processed files
-    files = get_files(local=True)
-    return files
+        raise ValueError(f"Invalid source: {source}. Must be a valid URL or file path.")
 
 
 def youtube_process(url):
@@ -660,7 +641,8 @@ def main():
 
         url = get_url()
         if check_path(url):
-            files = local_process(url)
+            # files = local_process(url)
+            files = download_video(url)
         else:
             files = youtube_process(url)
 
