@@ -103,47 +103,26 @@ else:
 
 
 
-# # Detect if running inside Docker (optional, but useful for flexibility)
-# RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
-
-# # Set paths based on environment
-# if RUNNING_IN_DOCKER:
-#     # Use the container's mapped Desktop directory
-#     DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
-# else:
-#     # Use the host's Desktop directory
-#     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
-
-# DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
-# ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
-
-# # Ensure directories exist
-# os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
-# os.makedirs(DOWNLOADING, exist_ok=True)
-# os.makedirs(ENCODING, exist_ok=True)
-
-# print(f"Download location: {DOWNLOAD_LOCATION}")
-# print(f"Downloading directory: {DOWNLOADING}")
-# print(f"Encoding directory: {ENCODING}")
-
-
-# Detect if running inside Docker
+# Detect if running inside Docker (optional, but useful for flexibility)
 RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
 
-# Set paths dynamically based on environment
+# Set paths based on environment
 if RUNNING_IN_DOCKER:
-    # Inside Docker: map host file system for imports
-    IMPORT_LOCATION = '/host/Macintosh_HD'
-    # Inside Docker: map the Desktop directory for exports
-    DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
+    # Use the container's mapped Desktop directory
+    DOWNLOAD_LOCATION = '/host/Macintosh_HD/'
 else:
-    # On host: use the user's file system directly for both imports and exports
-    IMPORT_LOCATION = '/'
-    DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
+    # Use the host's Desktop directory
+    DOWNLOAD_LOCATION = os.path.expanduser('/host/Macintosh_HD/')
+
 
 # Additional directories for downloading and encoding
-DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
-ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
+DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '~/Desktop/YT_Downloads/.downloading/')
+ENCODING = os.path.join(DOWNLOAD_LOCATION, '~/Desktop/YT_Downloads/.encoding/')
+
+# Ensure directories exist
+os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
+os.makedirs(DOWNLOADING, exist_ok=True)
+os.makedirs(ENCODING, exist_ok=True)
 
 # Ensure directories exist
 os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
