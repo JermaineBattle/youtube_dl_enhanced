@@ -245,60 +245,23 @@ def make_dirs():
 
 
 def get_url():
-    # "Prompt user to enter YouTube link or local file path"
-    # while True:
-    #     url = input('Enter YouTube link or drag and drop local file: ')
-    #     path = re.sub('\\\\', '', url).strip()
-    #     if check_path(path):
-    #         return path
-    #     if not url:
-    #         log.warning('Something went wrong, please ensure you entered a valid URL or file path.')
-    #     return url
-
-    """Prompt user to enter YouTube link or local file path"""
+    "Prompt user to enter YouTube link or local file path"
     while True:
         url = input('Enter YouTube link or drag and drop local file: ')
-
-        print(f"Original input: {url}")
-        url = re.sub(r'\\', '', url).strip()  # Ensure this isn't altering the file path incorrectly
-        print(f"Processed input: {url}")
-        # url = re.sub(r'\\', '', url).strip()
-
-        # Check if it's a valid local file
-        if os.path.exists(url):
-            print(f"[get_url] Detected local file: {url}")
-            return url
-
-        # Check if it's a valid URL
-        if check_url(url):
-            print(f"[get_url] Detected URL: {url}")
-            return url
-
-        log.warning('[get_url] Invalid input. Please enter a valid URL or file path.')
+        path = re.sub('\\\\', '', url).strip()
+        if check_path(path):
+            return path
+        if not url:
+            log.warning('Something went wrong, please ensure you entered a valid URL or file path.')
+        return url
     
-
-
-
 def check_url(url):
-    # '''Check if URL is valid'''
-    # try:
-    #     urlopen(url)
-    #     return True
-    # except (URLError, ValueError):
-    #     return False
-    """Check if URL is valid"""
+    '''Check if URL is valid'''
     try:
-        # Only check URLs if the input isn't a local file
-        if os.path.exists(url):
-            return False
         urlopen(url)
         return True
     except (URLError, ValueError):
         return False
-
-
-
-
 
 def check_path(path):
     return os.path.exists(path)
@@ -612,149 +575,47 @@ def cleanup():
     except OSError:
         pass
 
-# def local_process(path):
-#     video = os.path.basename(path)
-#     new_name = re.sub(' ', '_', video)
-#     shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
-#     global starttime
-#     global runtime
-#     global monofix
-#     global mp4
-#     global norm
-#     global audio
-#     monofix = get_mono()
-#     if not monofix:
-#         starttime, runtime = get_trim()
-#     else:
-#         starttime = False
-#         runtime = False
-#     mp4 = get_mp4()
-#     norm = get_norm()
-#     audio = get_audio() 
-#     files = get_files(local=True)
-#     return files
-
 def local_process(path):
-    # Debugging: Log the file path
-    print(f"[local_process] Path received: {path}")
-
-    # Ensure the path is absolute and validate it
-    path = os.path.abspath(path)
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"[local_process] File not found: {path}")
-    print(f"[local_process] Absolute file path: {path}")
-
-    # Extract and sanitize file name
     video = os.path.basename(path)
-    new_name = re.sub(r' ', '_', video)
-    print(f"[local_process] Sanitized file name: {new_name}")
-
-    # Ensure the DOWNLOADING directory exists
-    if not os.path.isdir(DOWNLOADING):
-        raise NotADirectoryError(f"[local_process] DOWNLOADING directory not found: {DOWNLOADING}")
-
-    # Copy the file to the DOWNLOADING directory
-    try:
-        target_path = os.path.join(DOWNLOADING, new_name)
-        print(f"[local_process] Copying file to: {target_path}")
-        shutil.copy2(path, target_path)
-        print(f"[local_process] File successfully copied to: {target_path}")
-    except Exception as e:
-        raise RuntimeError(f"[local_process] Error copying file: {e}")
-
-    # Initialize global variables and process file
-    global starttime, runtime, monofix, mp4, norm, audio
-
+    new_name = re.sub(' ', '_', video)
+    shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
+    global starttime
+    global runtime
+    global monofix
+    global mp4
+    global norm
+    global audio
     monofix = get_mono()
-    print(f"[local_process] Mono fix status: {monofix}")
-
     if not monofix:
         starttime, runtime = get_trim()
-        print(f"[local_process] Trim settings - Start time: {starttime}, Runtime: {runtime}")
     else:
-        starttime, runtime = False, False
-        print(f"[local_process] No trimming required.")
-
+        starttime = False
+        runtime = False
     mp4 = get_mp4()
-    print(f"[local_process] MP4 conversion: {mp4}")
     norm = get_norm()
-    print(f"[local_process] Normalization: {norm}")
-    audio = get_audio()
-    print(f"[local_process] Audio processing: {audio}")
-
-    # Fetch processed files
-    try:
-        files = get_files(local=True)
-        print(f"[local_process] Processed files: {files}")
-    except Exception as e:
-        raise RuntimeError(f"[local_process] Error retrieving files: {e}")
-
+    audio = get_audio() 
+    files = get_files(local=True)
     return files
 
-
-
-
-# def youtube_process(url):
-#     url = strip_features(url)
-#     captions = auto_captions = False
-#     if not args.skip_encoding:
-#         global starttime
-#         global runtime
-#         global norm
-#         global audio
-#         global mp4
-#         starttime, runtime = get_trim()
-#         norm = get_norm()
-#         audio = get_audio()
-#         mp4 = get_mp4()
-#         if not audio:
-#             captions = get_captions()
-#             auto_captions = get_auto_captions() if captions else False
-#         legacy = get_legacy()
-#     download_video(url, captions, auto_captions, legacy)
-#     files = get_files()
-#     return files
-
-
 def youtube_process(url):
-    # Debugging: Log the URL or file path received
-    print(f"[youtube_process] Input received: {url}")
-
-    # Handle local file paths
-    if os.path.isfile(url):
-        print(f"[youtube_process] Detected local file: {url}")
-        return local_process(url)  # Redirect to local_process
-
-    # Process YouTube URL
     url = strip_features(url)
-    print(f"[youtube_process] Stripped URL: {url}")
-
     captions = auto_captions = False
-
     if not args.skip_encoding:
-        global starttime, runtime, norm, audio, mp4
-
+        global starttime
+        global runtime
+        global norm
+        global audio
+        global mp4
         starttime, runtime = get_trim()
-        print(f"[youtube_process] Trim settings - Start time: {starttime}, Runtime: {runtime}")
         norm = get_norm()
-        print(f"[youtube_process] Normalization: {norm}")
         audio = get_audio()
-        print(f"[youtube_process] Audio processing: {audio}")
         mp4 = get_mp4()
-        print(f"[youtube_process] MP4 conversion: {mp4}")
-
         if not audio:
             captions = get_captions()
             auto_captions = get_auto_captions() if captions else False
-            print(f"[youtube_process] Captions: {captions}, Auto captions: {auto_captions}")
-
         legacy = get_legacy()
-        print(f"[youtube_process] Legacy mode: {legacy}")
-
     download_video(url, captions, auto_captions, legacy)
     files = get_files()
-    print(f"[youtube_process] Processed files: {files}")
-
     return files
 
 
