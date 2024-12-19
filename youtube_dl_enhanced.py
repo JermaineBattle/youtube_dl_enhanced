@@ -116,8 +116,8 @@ else:
 
 
 # Additional directories for downloading and encoding
-DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '$HOME/Desktop/YT_Downloads/.downloading/')
-ENCODING = os.path.join(DOWNLOAD_LOCATION, '$HOME/Desktop/YT_Downloads/.encoding/')
+DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, 'Users/$HOME/Desktop/YT_Downloads/.downloading/')
+ENCODING = os.path.join(DOWNLOAD_LOCATION, 'Users/$HOME/Desktop/YT_Downloads/.encoding/')
 
 # Ensure directories exist
 os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
