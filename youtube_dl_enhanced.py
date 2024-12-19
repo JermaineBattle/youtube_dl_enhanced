@@ -598,90 +598,128 @@ def cleanup():
 #     return files
 
 def local_process(path):
-    # Debug: Print the input path
-    print(f"local_process called with path: {path}")
-    
-    # Ensure the path is absolute and exists
+    # Debugging: Log the file path
+    print(f"[local_process] Path received: {path}")
+
+    # Ensure the path is absolute and validate it
     path = os.path.abspath(path)
-    print(f"Absolute path: {path}")
     if not os.path.isfile(path):
-        raise FileNotFoundError(f"The file {path} does not exist.")
-    
-    # Extract and sanitize the filename
+        raise FileNotFoundError(f"[local_process] File not found: {path}")
+    print(f"[local_process] Absolute file path: {path}")
+
+    # Extract and sanitize file name
     video = os.path.basename(path)
-    print(f"Original video name: {video}")
-    new_name = re.sub(' ', '_', video)
-    print(f"Sanitized video name: {new_name}")
+    new_name = re.sub(r' ', '_', video)
+    print(f"[local_process] Sanitized file name: {new_name}")
 
     # Ensure the DOWNLOADING directory exists
     if not os.path.isdir(DOWNLOADING):
-        raise NotADirectoryError(f"The DOWNLOADING directory {DOWNLOADING} does not exist.")
-    
-    # Copy the file and handle errors
+        raise NotADirectoryError(f"[local_process] DOWNLOADING directory not found: {DOWNLOADING}")
+
+    # Copy the file to the DOWNLOADING directory
     try:
         target_path = os.path.join(DOWNLOADING, new_name)
-        print(f"Copying file to: {target_path}")
+        print(f"[local_process] Copying file to: {target_path}")
         shutil.copy2(path, target_path)
-        print("File copy successful.")
+        print(f"[local_process] File successfully copied to: {target_path}")
     except Exception as e:
-        print(f"Error during file copy: {e}")
-        raise RuntimeError(f"Failed to copy file: {e}")
-    
-    # Initialize global variables
+        raise RuntimeError(f"[local_process] Error copying file: {e}")
+
+    # Initialize global variables and process file
     global starttime, runtime, monofix, mp4, norm, audio
 
-    # Debug: Check and log mono status
     monofix = get_mono()
-    print(f"Monofix status: {monofix}")
+    print(f"[local_process] Mono fix status: {monofix}")
+
     if not monofix:
         starttime, runtime = get_trim()
-        print(f"Trim settings - Start time: {starttime}, Runtime: {runtime}")
+        print(f"[local_process] Trim settings - Start time: {starttime}, Runtime: {runtime}")
     else:
-        starttime = False
-        runtime = False
-        print("No trimming required.")
+        starttime, runtime = False, False
+        print(f"[local_process] No trimming required.")
 
-    # Debug: Log settings from helper functions
     mp4 = get_mp4()
-    print(f"MP4 conversion status: {mp4}")
+    print(f"[local_process] MP4 conversion: {mp4}")
     norm = get_norm()
-    print(f"Normalization status: {norm}")
+    print(f"[local_process] Normalization: {norm}")
     audio = get_audio()
-    print(f"Audio processing status: {audio}")
-    
-    # Get processed files
+    print(f"[local_process] Audio processing: {audio}")
+
+    # Fetch processed files
     try:
         files = get_files(local=True)
-        print(f"Processed files: {files}")
+        print(f"[local_process] Processed files: {files}")
     except Exception as e:
-        print(f"Error getting files: {e}")
-        raise RuntimeError(f"Failed to retrieve processed files: {e}")
-    
+        raise RuntimeError(f"[local_process] Error retrieving files: {e}")
+
     return files
 
 
+
+
+# def youtube_process(url):
+#     url = strip_features(url)
+#     captions = auto_captions = False
+#     if not args.skip_encoding:
+#         global starttime
+#         global runtime
+#         global norm
+#         global audio
+#         global mp4
+#         starttime, runtime = get_trim()
+#         norm = get_norm()
+#         audio = get_audio()
+#         mp4 = get_mp4()
+#         if not audio:
+#             captions = get_captions()
+#             auto_captions = get_auto_captions() if captions else False
+#         legacy = get_legacy()
+#     download_video(url, captions, auto_captions, legacy)
+#     files = get_files()
+#     return files
 
 
 def youtube_process(url):
+    # Debugging: Log the URL or file path received
+    print(f"[youtube_process] Input received: {url}")
+
+    # Handle local file paths
+    if os.path.isfile(url):
+        print(f"[youtube_process] Detected local file: {url}")
+        return local_process(url)  # Redirect to local_process
+
+    # Process YouTube URL
     url = strip_features(url)
+    print(f"[youtube_process] Stripped URL: {url}")
+
     captions = auto_captions = False
+
     if not args.skip_encoding:
-        global starttime
-        global runtime
-        global norm
-        global audio
-        global mp4
+        global starttime, runtime, norm, audio, mp4
+
         starttime, runtime = get_trim()
+        print(f"[youtube_process] Trim settings - Start time: {starttime}, Runtime: {runtime}")
         norm = get_norm()
+        print(f"[youtube_process] Normalization: {norm}")
         audio = get_audio()
+        print(f"[youtube_process] Audio processing: {audio}")
         mp4 = get_mp4()
+        print(f"[youtube_process] MP4 conversion: {mp4}")
+
         if not audio:
             captions = get_captions()
             auto_captions = get_auto_captions() if captions else False
+            print(f"[youtube_process] Captions: {captions}, Auto captions: {auto_captions}")
+
         legacy = get_legacy()
+        print(f"[youtube_process] Legacy mode: {legacy}")
+
     download_video(url, captions, auto_captions, legacy)
     files = get_files()
+    print(f"[youtube_process] Processed files: {files}")
+
     return files
+
 
 def main():
     while True:
