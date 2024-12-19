@@ -63,7 +63,6 @@ import logging
 import youtube_dl
 import yt_dlp
 from tqdm import tqdm
-
 monofix = False
 
 FORMAT = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s',
@@ -100,51 +99,10 @@ else:
     log.warning('Unsupported resolution for -res argument.  Supported resolutions are: 720, 1080, 2160')
     os._exit(os.EX_OK)
 
-
-
-
-# Detect if running inside Docker (optional, but useful for flexibility)
-RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
-
-# # Set paths based on environment
-# if RUNNING_IN_DOCKER:
-#     # Use the container's mapped Desktop directory
-#     DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
-# else:
-#     # Use the host's Desktop directory
-#     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
-
-
-if RUNNING_IN_DOCKER:
-    # Prepend /host to all file paths inside the container
-    def resolve_path(path):
-        return os.path.join('/host', path.lstrip('/'))
-else:
-    # Use the path directly on the host system
-    def resolve_path(path):
-        return path
-    
-if RUNNING_IN_DOCKER:
-    # Prepend `/host` to map the Desktop directory inside the container
-    DOWNLOAD_LOCATION = '/host/Users/{}/Desktop/YT_Downloads/'.format(os.environ.get('USER', ''))
-else:
-    # Use the user's Desktop directory on the host
-    DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
-
+# Set paths
+DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
 DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
 ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
-
-# DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
-# ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
-
-# Ensure directories exist
-os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
-os.makedirs(DOWNLOADING, exist_ok=True)
-os.makedirs(ENCODING, exist_ok=True)
-
-print(f"Download location: {DOWNLOAD_LOCATION}")
-print(f"Downloading directory: {DOWNLOADING}")
-print(f"Encoding directory: {ENCODING}")
 
 YOUTUBE_CAPTION_FORMATS = set(['.srt', '.sbv', '.sub', '.mpsub', '.lrc', '.cap', '.smi',
                                 '.sami', '.rt', '.vtt', '.ttml', '.dfxp', '.scc', '.stl',
@@ -223,6 +181,30 @@ FFMPEG_PRORES_LETTERBOX_CAPS = ['ffmpeg', '-i',
                                 '-ar 48000',
                                 '{outpath}']
 
+
+
+# -----------------------------------------
+# DEPRECATED LIST
+# SEE BELOW LIST FOR UPDATE
+# -----------------------------------------
+# FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
+#                  'ffmpeg', '-i',
+#                  '{inpath}', 
+#                  '-c:v copy',
+#                  '-ac 1',
+#                  'Temp_Mono.mov',
+#                  '&&',
+#                  'ffmpeg', '-i',
+#                  'Temp_Mono.mov', 
+#                  '-c:v copy',
+#                  '-ac 2',
+#                  '{outpath}',
+#                  '&& rm Temp_Mono.mov'] 
+# -----------------------------------------
+# SEE LIST BELOW FOR UPDATE
+# -----------------------------------------
+
+
 # LIST UPDATED TO ACCOMODATE MONO --> STEREO FUNCTIONALITY
 FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
                  'ffmpeg', '-i',
@@ -232,6 +214,8 @@ FFMPEG_MONOFIX = ['rm Temp_mono.mov;',
                  '-ac 2',
                  '{outpath}',
                  '&& rm Temp_Mono.mov']
+
+
 
 FFMPEG_NORM =   [' && ffmpeg-normalize',
                 '{outpath}',
@@ -285,24 +269,9 @@ def check_url(url):
         return True
     except (URLError, ValueError):
         return False
-    
-
-def prepend_macintosh_hd(file_path):
-    # Normalize the file path
-    normalized_path = os.path.abspath(file_path)
-    
-    # Prepend "Macintosh HD" only if it's not already present
-    if not normalized_path.startswith("/Macintosh HD"):
-        normalized_path = os.path.join("/Macintosh HD", normalized_path.lstrip("/"))
-    
-    return normalized_path
-
-
 
 def check_path(path):
-
-    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(prepend_macintosh_hd(path)))
-    return os.path.exists(prepend_macintosh_hd(path))
+    return os.path.exists(path)
 
 def strip_features(url):
     '''Remove YouTube features from url.'''
@@ -477,7 +446,7 @@ def get_audio():
 
 def get_mp4():
     '''Output Audio only'''
-    user_input = input('Would you like to convert to MP4 format? --PLAY VIA BROWSER ONLY-- (yes/no)') or 'n'
+    user_input = input('Would you like to convert to MP4 format? (yes/no)') or 'n'
     if not user_input[0].lower() == 'y':
         return False
     args.skip_encoding = True
@@ -577,7 +546,7 @@ def mp4_container(video_path):
     try:
         outpoint = time.strftime('%H:%M:%S', time.gmtime(duration + 1))
     except:
-        outpoint = '08:30:00'
+        outpoint = '02:00:00'
 
     vid_name, ext = os.path.splitext(os.path.basename(video_path))
     if ext == '.mp4':
@@ -635,10 +604,13 @@ def local_process(path):
     files = get_files(local=True)
     return files
 
+
 def youtube_process(url):
     url = strip_features(url)
     captions = auto_captions = False
     if not args.skip_encoding:
+        #captions = get_captions()
+        #auto_captions = get_auto_captions() if captions else False
         global starttime
         global runtime
         global norm
@@ -656,7 +628,6 @@ def youtube_process(url):
     files = get_files()
     return files
 
-
 def main():
     while True:
         cleanup()
@@ -673,7 +644,7 @@ def main():
         video_file = files.get('video')
         if not video_file:
             log.debug('Something went wrong, video not found.')
-            break 
+            break # re-visit this
 
         if args.skip_encoding:
             mp4_container(video_file)
