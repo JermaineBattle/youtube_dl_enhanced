@@ -103,17 +103,45 @@ else:
 
 
 
-# Detect if running inside Docker (optional, but useful for flexibility)
+# # Detect if running inside Docker (optional, but useful for flexibility)
+# RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
+
+# # Set paths based on environment
+# if RUNNING_IN_DOCKER:
+#     # Use the container's mapped Desktop directory
+#     DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
+# else:
+#     # Use the host's Desktop directory
+#     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
+
+# DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
+# ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
+
+# # Ensure directories exist
+# os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
+# os.makedirs(DOWNLOADING, exist_ok=True)
+# os.makedirs(ENCODING, exist_ok=True)
+
+# print(f"Download location: {DOWNLOAD_LOCATION}")
+# print(f"Downloading directory: {DOWNLOADING}")
+# print(f"Encoding directory: {ENCODING}")
+
+
+# Detect if running inside Docker
 RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
 
-# Set paths based on environment
+# Set paths dynamically based on environment
 if RUNNING_IN_DOCKER:
-    # Use the container's mapped Desktop directory
+    # Inside Docker: map host file system for imports
+    IMPORT_LOCATION = '/host/Macintosh_HD'
+    # Inside Docker: map the Desktop directory for exports
     DOWNLOAD_LOCATION = '/app/Desktop/YT_Downloads/'
 else:
-    # Use the host's Desktop directory
+    # On host: use the user's file system directly for both imports and exports
+    IMPORT_LOCATION = '/'
     DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads/')
 
+# Additional directories for downloading and encoding
 DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
 ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
 
@@ -121,10 +149,6 @@ ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
 os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
 os.makedirs(DOWNLOADING, exist_ok=True)
 os.makedirs(ENCODING, exist_ok=True)
-
-print(f"Download location: {DOWNLOAD_LOCATION}")
-print(f"Downloading directory: {DOWNLOADING}")
-print(f"Encoding directory: {ENCODING}")
 
 YOUTUBE_CAPTION_FORMATS = set(['.srt', '.sbv', '.sub', '.mpsub', '.lrc', '.cap', '.smi',
                                 '.sami', '.rt', '.vtt', '.ttml', '.dfxp', '.scc', '.stl',
@@ -246,24 +270,22 @@ def make_dirs():
         if not os.path.exists(folder):
             os.makedirs(folder)
 
-def prepend_macintosh_hd(file_path):
-    # Normalize the file path
-    normalized_path = os.path.abspath(file_path)
-    
-    # Prepend "Macintosh HD" only if it's not already present
-    if not normalized_path.startswith("/Macintosh HD"):
-        normalized_path = os.path.join("/Macintosh HD", normalized_path.lstrip("/"))
-    
-    return normalized_path
+def resolve_import_path(file_path):
+    """Resolve file paths dynamically based on environment"""
+    if RUNNING_IN_DOCKER:
+        # Prepend the mounted host file system inside Docker
+        return os.path.join('/host/Macintosh_HD', file_path.lstrip('/'))
+    else:
+        # Use the file path directly on the host
+        return file_path
 
 def get_url():
     "Prompt user to enter YouTube link or local file path"
     while True:
         url = input('Enter YouTube link or drag and drop local file: ')
         path = re.sub('\\\\', '', url).strip()
-        if check_path(path):
-            
-            return path
+        if check_path(resolve_import_path(path)):
+            return resolve_import_path(path)
         if not url:
             log.warning('Something went wrong, please ensure you entered a valid URL or file path.')
         return url
@@ -276,23 +298,9 @@ def check_url(url):
     except (URLError, ValueError):
         return False
     
-
-def prepend_macintosh_hd(file_path):
-    # Normalize the file path
-    normalized_path = os.path.abspath(file_path)
-    
-    # Prepend "Macintosh HD" only if it's not already present
-    if not normalized_path.startswith("/Macintosh HD"):
-        normalized_path = os.path.join("/Macintosh HD", normalized_path.lstrip("/"))
-    
-    return normalized_path
-
-
-
 def check_path(path):
-
-    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(prepend_macintosh_hd(path)))
-    return os.path.exists(prepend_macintosh_hd(path))
+    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(path))
+    return os.path.exists(path)
 
 def strip_features(url):
     '''Remove YouTube features from url.'''
