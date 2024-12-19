@@ -106,18 +106,20 @@ else:
 # Detect if running inside Docker (optional, but useful for flexibility)
 RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
 
-# Set paths based on environment
+# Set paths dynamically
 if RUNNING_IN_DOCKER:
-    # Use the container's mapped Desktop directory
-    DOWNLOAD_LOCATION = '/host/Macintosh_HD/'
+    # Inside Docker: Access the host's file system
+    BASE_LOCATION = '/host/Macintosh_HD'
+    # Dynamically resolve the user directory
+    user_home = os.environ.get('USER', '')  # Get the username inside the container
+    DOWNLOAD_LOCATION = os.path.join(BASE_LOCATION, 'Users', user_home, 'Desktop', 'YT_Downloads')
 else:
-    # Use the host's Desktop directory
-    DOWNLOAD_LOCATION = os.path.expanduser('/host/Macintosh_HD/')
-
+    # On the host: Use the current user's Desktop directory
+    DOWNLOAD_LOCATION = os.path.expanduser('~/Desktop/YT_Downloads')
 
 # Additional directories for downloading and encoding
-DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, 'Users/$HOME/Desktop/YT_Downloads/.downloading/')
-ENCODING = os.path.join(DOWNLOAD_LOCATION, 'Users/$HOME/Desktop/YT_Downloads/.encoding/')
+DOWNLOADING = os.path.join(DOWNLOAD_LOCATION, '.downloading/')
+ENCODING = os.path.join(DOWNLOAD_LOCATION, '.encoding/')
 
 # Ensure directories exist
 os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
