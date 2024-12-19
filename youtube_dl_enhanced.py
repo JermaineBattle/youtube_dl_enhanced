@@ -575,25 +575,57 @@ def cleanup():
     except OSError:
         pass
 
+# def local_process(path):
+#     video = os.path.basename(path)
+#     new_name = re.sub(' ', '_', video)
+#     shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
+#     global starttime
+#     global runtime
+#     global monofix
+#     global mp4
+#     global norm
+#     global audio
+#     monofix = get_mono()
+#     if not monofix:
+#         starttime, runtime = get_trim()
+#     else:
+#         starttime = False
+#         runtime = False
+#     mp4 = get_mp4()
+#     norm = get_norm()
+#     audio = get_audio() 
+#     files = get_files(local=True)
+#     return files
+
 def local_process(path):
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"The file {path} does not exist.")
+    
     video = os.path.basename(path)
     new_name = re.sub(' ', '_', video)
-    shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
-    global starttime
-    global runtime
-    global monofix
-    global mp4
-    global norm
-    global audio
+
+    if not os.path.isdir(DOWNLOADING):
+        raise NotADirectoryError(f"DOWNLOADING directory {DOWNLOADING} does not exist.")
+    
+    try:
+        # Copy the file to the downloading directory
+        shutil.copy2(path, os.path.join(DOWNLOADING, new_name))
+    except Exception as e:
+        raise RuntimeError(f"Failed to copy file: {e}")
+    
+    global starttime, runtime, monofix, mp4, norm, audio
+    
     monofix = get_mono()
     if not monofix:
         starttime, runtime = get_trim()
     else:
-        starttime = False
-        runtime = False
+        starttime, runtime = False, False
+    
     mp4 = get_mp4()
     norm = get_norm()
-    audio = get_audio() 
+    audio = get_audio()
+
+    # Get the processed files
     files = get_files(local=True)
     return files
 
