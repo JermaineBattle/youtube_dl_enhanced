@@ -264,7 +264,7 @@ def check_url(url):
         return False
 
 def check_path(path):
-    print("HERE IS THE PATH", path)
+    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(path))
     return os.path.exists(path)
 
 def strip_features(url):
