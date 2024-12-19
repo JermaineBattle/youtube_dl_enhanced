@@ -245,23 +245,56 @@ def make_dirs():
 
 
 def get_url():
-    "Prompt user to enter YouTube link or local file path"
+    # "Prompt user to enter YouTube link or local file path"
+    # while True:
+    #     url = input('Enter YouTube link or drag and drop local file: ')
+    #     path = re.sub('\\\\', '', url).strip()
+    #     if check_path(path):
+    #         return path
+    #     if not url:
+    #         log.warning('Something went wrong, please ensure you entered a valid URL or file path.')
+    #     return url
+
+    """Prompt user to enter YouTube link or local file path"""
     while True:
         url = input('Enter YouTube link or drag and drop local file: ')
-        path = re.sub('\\\\', '', url).strip()
-        if check_path(path):
-            return path
-        if not url:
-            log.warning('Something went wrong, please ensure you entered a valid URL or file path.')
-        return url
+        url = re.sub(r'\\', '', url).strip()
+
+        # Check if it's a valid local file
+        if os.path.exists(url):
+            print(f"[get_url] Detected local file: {url}")
+            return url
+
+        # Check if it's a valid URL
+        if check_url(url):
+            print(f"[get_url] Detected URL: {url}")
+            return url
+
+        log.warning('[get_url] Invalid input. Please enter a valid URL or file path.')
     
+
+
+
 def check_url(url):
-    '''Check if URL is valid'''
+    # '''Check if URL is valid'''
+    # try:
+    #     urlopen(url)
+    #     return True
+    # except (URLError, ValueError):
+    #     return False
+    """Check if URL is valid"""
     try:
+        # Only check URLs if the input isn't a local file
+        if os.path.exists(url):
+            return False
         urlopen(url)
         return True
     except (URLError, ValueError):
         return False
+
+
+
+
 
 def check_path(path):
     return os.path.exists(path)
