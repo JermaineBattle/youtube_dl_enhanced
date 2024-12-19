@@ -285,10 +285,24 @@ def check_url(url):
         return True
     except (URLError, ValueError):
         return False
+    
+
+def prepend_macintosh_hd(file_path):
+    # Normalize the file path
+    normalized_path = os.path.abspath(file_path)
+    
+    # Prepend "Macintosh HD" only if it's not already present
+    if not normalized_path.startswith("/Macintosh HD"):
+        normalized_path = os.path.join("/Macintosh HD", normalized_path.lstrip("/"))
+    
+    return normalized_path
+
+
 
 def check_path(path):
-    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(path))
-    return os.path.exists(path)
+
+    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(prepend_macintosh_hd(path)))
+    return os.path.exists(prepend_macintosh_hd(path))
 
 def strip_features(url):
     '''Remove YouTube features from url.'''
