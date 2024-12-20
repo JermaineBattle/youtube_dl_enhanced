@@ -244,17 +244,16 @@ def clear():
 
 
 def intro_message():
-    logger.info('-------------------------------------------------------------------------')
-    logger.info('Follow instructions to download a YouTube video or convert a local video:')
+    log.info('-------------------------------------------------------------------------')
+    log.info('Follow instructions to download a YouTube video or convert a local video:')
     log.info('Files will be downloaded to: {path}'.format(path=DOWNLOAD_LOCATION))
     if args.skip_encoding:
-        logger.info('Not re-encoding video due to "-fast" option')
+        log.info('Not re-encoding video due to "-fast" option')
     else:
-        logger.info('Selected encoding format: {encoding} at {framerate} fps'.format(encoding=args.encoding, framerate=args.framerate))
-    logger.info('Selected output resolution: {width}x{height}'.format(width=WIDTH, height=HEIGHT))
-    logger.info('NOTE: MP4 Conversion for LOCAL FILES ONLY. Youtube Link processing will require MP4 output to be played via drag/drop within the browser')
-    logger.warning("This is a warning message")
-    logger.info('-------------------------------------------------------------------------\n')
+        log.info('Selected encoding format: {encoding} at {framerate} fps'.format(encoding=args.encoding, framerate=args.framerate))
+    log.info('Selected output resolution: {width}x{height}'.format(width=WIDTH, height=HEIGHT))
+    logger.warning('MP4 Conversion for LOCAL FILES ONLY. Youtube Link processing will require MP4 output to be played via drag/drop within the browser')
+    log.info('-------------------------------------------------------------------------\n')
 
 def make_dirs():
     '''Create necessary directories'''
