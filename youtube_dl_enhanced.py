@@ -239,6 +239,7 @@ def intro_message():
     else:
         log.info('Selected encoding format: {encoding} at {framerate} fps'.format(encoding=args.encoding, framerate=args.framerate))
     log.info('Selected output resolution: {width}x{height}'.format(width=WIDTH, height=HEIGHT))
+    log.info('NOTE: MP4 Conversion for LOCAL FILES ONLY. Youtube Link processing will require MP4 output to be played via drag/drop within the browser')
     log.info('-------------------------------------------------------------------------\n')
 
 def make_dirs():
