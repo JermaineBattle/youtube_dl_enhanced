@@ -314,7 +314,7 @@ def get_auto_captions():
         return False
     return True
 
-def download_video(url, captions, auto_captions, legacy):
+def download_video(url, captions, auto_captions):
     '''Try to download YouTube video in specific resolution.
 
     Fall back to bestvideo+bestaudio/best if not available in target resolution.
@@ -329,25 +329,25 @@ def download_video(url, captions, auto_captions, legacy):
     elif captions:
         ydl_opts.update({'writesubtitles': True})
 
-    while True:
-        if legacy:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                try:
-                    ydl.download([url])
-                    break
-                except youtube_dl.utils.DownloadError as e:
-                    if 'not available' in str(e):
-                        log.warning('Resolution {res} not available, downloading best possible resolution.'.format(res=args.res))
-                        ydl_opts.update(YDL_OPTS_BEST_RES)
-        else:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                try:
-                    ydl.download([url])
-                    break
-                except yt_dlp.utils.DownloadError as e:
-                    if 'not available' in str(e):
-                        log.warning('Resolution {res} not available, downloading best possible resolution.'.format(res=args.res))
-                        ydl_opts.update(YDL_OPTS_BEST_RES)
+    # while True:
+    #     if legacy:
+    #         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    #             try:
+    #                 ydl.download([url])
+    #                 break
+    #             except youtube_dl.utils.DownloadError as e:
+    #                 if 'not available' in str(e):
+    #                     log.warning('Resolution {res} not available, downloading best possible resolution.'.format(res=args.res))
+    #                     ydl_opts.update(YDL_OPTS_BEST_RES)
+    #     else:
+    #         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #             try:
+    #                 ydl.download([url])
+    #                 break
+    #             except yt_dlp.utils.DownloadError as e:
+    #                 if 'not available' in str(e):
+    #                     log.warning('Resolution {res} not available, downloading best possible resolution.'.format(res=args.res))
+    #                     ydl_opts.update(YDL_OPTS_BEST_RES)
 
 def get_files(local=False):
     '''Return dict of filepaths to use for encoding/burning/moving.'''
@@ -451,7 +451,7 @@ def get_audio():
 
 def get_mp4():
     '''Output Audio only'''
-    user_input = input('Would you like to convert to MP4 format? --PLAY VIA BROWSER ONLY-- (yes/no)') or 'n'
+    user_input = input('Would you like to convert to local file to MP4 format?(yes/no)') or 'n'
     if not user_input[0].lower() == 'y':
         return False
     args.skip_encoding = True
@@ -615,18 +615,22 @@ def youtube_process(url):
     if not args.skip_encoding:
         global starttime
         global runtime
+        global mp4
         global norm
         global audio
-        global mp4
-        starttime, runtime = get_trim()
+        if not monofix:
+            starttime, runtime = get_trim()
+        else:
+            starttime = False
+            runtime = False
         norm = get_norm()
         audio = get_audio()
         mp4 = get_mp4()
         if not audio:
             captions = get_captions()
             auto_captions = get_auto_captions() if captions else False
-        legacy = get_legacy()
-    download_video(url, captions, auto_captions, legacy)
+        # legacy = get_legacy()
+    download_video(url, captions, auto_captions)
     files = get_files()
     return files
 
