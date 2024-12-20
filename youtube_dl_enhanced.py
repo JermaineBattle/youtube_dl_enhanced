@@ -315,7 +315,7 @@ def get_auto_captions():
         return False
     return True
 
-def download_video(url, captions, auto_captions, legacy)
+def download_video(url, captions, auto_captions, legacy):
     '''Try to download YouTube video in specific resolution.
 
     Fall back to bestvideo+bestaudio/best if not available in target resolution.
