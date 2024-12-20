@@ -67,7 +67,7 @@ import colorlog
 
 
 # Initiate logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("intro_message")
 logger.setLevel(logging.DEBUG)
 if logger.hasHandlers():
     logger.handlers.clear()
