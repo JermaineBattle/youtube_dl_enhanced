@@ -65,14 +65,17 @@ import yt_dlp
 from tqdm import tqdm
 import colorlog
 
+
+# Initiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler = colorlog.StreamHandler()
-handler.setFormatter(colorlog.ColoredFormatter(
-    "%(log_color)s%(levelname)s:%(name)s:%(message)s"
-))
-
-logger.addHandler(handler)
+if not logger.handlers:
+    # Create a handler
+    handler = colorlog.StreamHandler()
+    handler.setFormatter(colorlog.ColoredFormatter(
+        "%(log_color)s%(levelname)s:%(name)s:%(message)s"
+    ))
+    logger.addHandler(handler)
 
 monofix = False
 
