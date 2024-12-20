@@ -63,6 +63,16 @@ import logging
 import youtube_dl
 import yt_dlp
 from tqdm import tqdm
+import colorlog
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    "%(log_color)s%(levelname)s:%(name)s:%(message)s"
+))
+
+logger.addHandler(handler)
 
 monofix = False
 
@@ -240,6 +250,7 @@ def intro_message():
         log.info('Selected encoding format: {encoding} at {framerate} fps'.format(encoding=args.encoding, framerate=args.framerate))
     log.info('Selected output resolution: {width}x{height}'.format(width=WIDTH, height=HEIGHT))
     log.info('NOTE: MP4 Conversion for LOCAL FILES ONLY. Youtube Link processing will require MP4 output to be played via drag/drop within the browser')
+    logger.warning("This is a warning message")
     log.info('-------------------------------------------------------------------------\n')
 
 def make_dirs():
