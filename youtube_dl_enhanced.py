@@ -126,11 +126,6 @@ os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
 os.makedirs(DOWNLOADING, exist_ok=True)
 os.makedirs(ENCODING, exist_ok=True)
 
-# Ensure directories exist
-os.makedirs(DOWNLOAD_LOCATION, exist_ok=True)
-os.makedirs(DOWNLOADING, exist_ok=True)
-os.makedirs(ENCODING, exist_ok=True)
-
 YOUTUBE_CAPTION_FORMATS = set(['.srt', '.sbv', '.sub', '.mpsub', '.lrc', '.cap', '.smi',
                                 '.sami', '.rt', '.vtt', '.ttml', '.dfxp', '.scc', '.stl',
                                 '.tds', '.cin', '.asc'])
@@ -148,6 +143,7 @@ FFMPEG_MP4_CONTAINER = ['ffmpeg', '-i',
                         '{startpoint}',
                         '-to', 
                         '{runtime}',
+                        '-r', '{framerate}'
                         '-c:v', 'mpeg4',
                         '-c:a', 'aac',
                         '{outpath}']
@@ -280,7 +276,6 @@ def check_url(url):
         return False
     
 def check_path(path):
-    print("OS PATH EXISTS--->>>>>>: ", os.path.exists(path))
     return os.path.exists(path)
 
 def strip_features(url):
