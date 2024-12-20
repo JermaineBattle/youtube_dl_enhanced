@@ -69,18 +69,14 @@ import colorlog
 # Initiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-# Create a handler
+if logger.hasHandlers():
+    logger.handlers.clear()
 handler = colorlog.StreamHandler()
-
-# Set the formatter with only the log message (no INFO:__main__)
 handler.setFormatter(colorlog.ColoredFormatter(
-    "%(log_color)s%(message)s"  # Only the log message, with color
+    "%(log_color)s%(message)s" 
 ))
+logger.addHandler(handler)
 
-# Add the handler to the logger
-if not logger.handlers:  # Prevent duplicate handlers
-    logger.addHandler(handler)
 
 monofix = False
 
