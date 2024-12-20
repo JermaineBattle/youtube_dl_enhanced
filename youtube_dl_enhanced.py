@@ -69,12 +69,17 @@ import colorlog
 # Initiate logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-if not logger.handlers:
-    # Create a handler
-    handler = colorlog.StreamHandler()
-    handler.setFormatter(colorlog.ColoredFormatter(
-        "%(log_color)s%(levelname)s:%(name)s:%(message)s"
-    ))
+
+# Create a handler
+handler = colorlog.StreamHandler()
+
+# Set the formatter with only the log message (no INFO:__main__)
+handler.setFormatter(colorlog.ColoredFormatter(
+    "%(log_color)s%(message)s"  # Only the log message, with color
+))
+
+# Add the handler to the logger
+if not logger.handlers:  # Prevent duplicate handlers
     logger.addHandler(handler)
 
 monofix = False
@@ -244,7 +249,7 @@ def clear():
 
 
 def intro_message():
-    log.info('-------------------------------------------------------------------------')
+    logger.info('-------------------------------------------------------------------------')
     log.info('Follow instructions to download a YouTube video or convert a local video:')
     log.info('Files will be downloaded to: {path}'.format(path=DOWNLOAD_LOCATION))
     if args.skip_encoding:
@@ -252,8 +257,8 @@ def intro_message():
     else:
         log.info('Selected encoding format: {encoding} at {framerate} fps'.format(encoding=args.encoding, framerate=args.framerate))
     log.info('Selected output resolution: {width}x{height}'.format(width=WIDTH, height=HEIGHT))
-    logger.warning('MP4 Conversion for LOCAL FILES ONLY. Youtube Link processing will require MP4 output to be played via drag/drop within the browser')
-    log.info('-------------------------------------------------------------------------\n')
+    logger.warning('NOTE: MP4 Conversion works for LOCAL FILES ONLY. Youtube Links will require MP4 output to be played via drag/drop within the browser')
+    logger.info('-------------------------------------------------------------------------\n')
 
 def make_dirs():
     '''Create necessary directories'''
