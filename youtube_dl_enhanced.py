@@ -679,11 +679,5 @@ def main():
         encode(files, is_target_res, duration, starttime, runtime, monofix, norm, audio)
         move_files()
 
-        print("Program completed. Restarting now...")
-        time.sleep(1)  # Optional delay before restart
-        # Restart the program
-        python = sys.executable
-        os.execv(python, [python] + sys.argv)
-
 if __name__ == '__main__':
     main()
