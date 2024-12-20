@@ -157,7 +157,6 @@ FFMPEG_MP4_CONTAINER = ['ffmpeg', '-i',
                         '{startpoint}',
                         '-to', 
                         '{runtime}',
-                        '-r', '{framerate}'
                         '-c:v', 'mpeg4',
                         '-c:a', 'aac',
                         '{outpath}']
