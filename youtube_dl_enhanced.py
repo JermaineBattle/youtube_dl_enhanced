@@ -77,7 +77,6 @@ handler.setFormatter(colorlog.ColoredFormatter(
 ))
 logger.addHandler(handler)
 
-
 monofix = False
 
 FORMAT = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s',
@@ -113,9 +112,6 @@ elif args.res == 2160:
 else:
     log.warning('Unsupported resolution for -res argument.  Supported resolutions are: 720, 1080, 2160')
     os._exit(os.EX_OK)
-
-
-
 
 # Detect if running inside Docker (optional, but useful for flexibility)
 RUNNING_IN_DOCKER = os.path.exists('/.dockerenv')
